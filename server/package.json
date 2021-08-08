@@ -1,0 +1,21 @@
+{
+  "name": "webvel-server",
+  "version": "1.0.0",
+  "description": "Node.js server for Webvel (Express.js and PostgreSQL)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:server": "nodemon ./server.js"
+  },
+  "author": "j-dover",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "pg": "^8.7.1",
+    "sequelize": "^6.6.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
