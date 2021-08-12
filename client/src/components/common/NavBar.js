@@ -13,8 +13,8 @@ function NavBar() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="/stories">Link</Nav.Link>
-              <Nav.Link href="#"></Nav.Link>
+              <Nav.Link href="/stories">Stories</Nav.Link>
+              <Nav.Link href="/user/:username/stories">My Profile</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

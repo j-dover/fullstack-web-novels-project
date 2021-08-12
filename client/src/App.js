@@ -13,12 +13,14 @@ import {
 
 function App() {
   return (
-    <div className="App">
-      <NavBar/>
-      <Container>
-        <UserProfile/>
-      </Container>
-    </div>
+    <Router>
+      <div className="App">
+        <NavBar/>
+        <Container>
+          <Route path="/user/:username/stories" component={UserProfile}/>
+        </Container>
+      </div>
+    </Router>
   );
 }
 

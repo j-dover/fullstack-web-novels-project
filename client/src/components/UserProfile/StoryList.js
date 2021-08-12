@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
-function StoryList() {
-  let testUser = 'testuser1';
-  const [chapters, setChapters] = useState([]);
+const StoryList = (props) => {
+  console.log('Receive prop ', props.username);
+  const [stories, setStories] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/user/testuser1/stories")
+    fetch(`http://localhost:5000/user/${props.username}/stories`)
       .then(res => res.json())
       .then(
         (result) => {
           // set is loaded
-          setChapters(result);
+          setStories(result);
         },
         (error) => {
           console.error(error);
@@ -22,7 +22,7 @@ function StoryList() {
   return (
     <div>
       <ul>
-        {chapters.map(item => (
+        {stories.map(item => (
           <li key={item.story_id}>
             {item.title} by {item.username}
           </li>
