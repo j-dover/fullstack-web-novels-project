@@ -20,9 +20,13 @@ app.get('/', (req, res) => {
 // Get all Stories
 app.get('/stories', async(req, res) => {
   try {
-    const allStories = await pool.query("SELECT * FROM story");
-    console.log(allStories);
-    res.json(allStories);
+    const allStories = await pool.query(`
+      SELECT story.story_id, story.title, user_account.username 
+      FROM story
+      RIGHT JOIN user_account
+      ON user_account.user_id = story.user_id;`);
+    console.log(allStories.rows);
+    res.json(allStories.rows);
   } catch(error) {
     console.error(error.message);
   }
@@ -32,12 +36,13 @@ app.get('/stories', async(req, res) => {
 app.get('/user/:username/stories', async(req, res) => {
   try {
     const userStories = await pool.query(`
-      SELECT user_account.username, story.title, story.summary, story.creation_date FROM story
-        RIGHT JOIN 
-          user_account
-        ON user_account.user_id = story.user_id
-        WHERE user_account.username = $1;`, [req.params.username]);
-    res.json(userStories);
+      SELECT user_account.username, story.title, story.summary, story.creation_date 
+      FROM story
+      RIGHT JOIN user_account
+      ON user_account.user_id = story.user_id
+      WHERE user_account.username = $1;`, [req.params.username]);
+    console.log(userStories.rows);
+    res.json(userStories.rows);
   }
   catch(error) {
     console.error(error.message);
@@ -47,10 +52,13 @@ app.get('/user/:username/stories', async(req, res) => {
 // Create a story
 app.post('/story', async (req, res) => {
   try {
-    const { title, user_id, summary } = req.body;
-    console.log(`Create story - Title: ${title}, Author: ${user_id}, Summary: ${summary}`);
-    const newStory = await pool.query('INSERT INTO story(title, user_id, summary) VALUES ($1, $2, $3) RETURNING *', [title, user_id, summary]);
-    res.json(newStory);
+    const { title, user_id, summary, genre } = req.body;
+    console.log(`Create story - Title: ${title}, Author: ${user_id}, Summary: ${summary}, Genre: ${genre}`);
+    const newStory = await pool.query(`
+    INSERT INTO story(title, user_id, summary, genre) 
+    VALUES ($1, $2, $3, $4) 
+    RETURNING *`, [title, user_id, summary, genre]);
+    res.json(newStory.rows);
   } catch (error) {
     console.error(error.message);
   }
@@ -59,16 +67,19 @@ app.post('/story', async (req, res) => {
 // Update a story from user
 app.put('/user/:user_id/story/:story_id', async(req, res, next) => {
   try {
-    const { title, user_id, summary } = req.body;
-    console.log(`Update story - Title: ${title}, Author: ${user_id}, Summary: ${summary}`);
-    const updatedStory = await pool.query('UPDATE story SET title = $1, summary = $2 WHERE story_id = $3 AND user_id = $4 RETURNING story_id', [title, summary, req.params.story_id, req.params.user_id]);
+    const { title, user_id, summary, genre } = req.body;
+    console.log(`Update story - Title: ${title}, Author: ${user_id}, Summary: ${summary}, Genre: ${genre}`);
+    const updatedStory = await pool.query(`
+      UPDATE story SET title = $1, summary = $2, genre = $3
+      WHERE story_id = $4 AND user_id = $5 
+      RETURNING story_id`, [title, summary, genre, req.params.story_id, req.params.user_id]);
     if (updatedStory.rowCount === 0) {
       console.error(`Error: story_id ${req.params.story_id} cannot be found. User ${req.params.user_id} may not be the story's author.`);
       next();
     }
     else {
       console.log(`Updated information: Title: ${title}, Summary: ${summary}`);
-      res.json(updatedStory);
+      res.json(updatedStory.rows);
     }
   }
   catch(error) {
@@ -81,7 +92,7 @@ app.delete('/user/:user_id/story/:story_id', async(req, res) => {
   try {
     const removedStory = await pool.query('DELETE FROM stories where story_id = $1 AND user_id = $2 RETURNING *;', [req.params.story_id, req.params.user_id]);
     console.log(`Success: Deleted story ${req.params.story_id} by user ${req.params.user_id}`);
-    res.json(removedStory);
+    res.json(removedStory.row);
   }
   catch(error) {
     console.error(`Failed to delete story ${req.params.story_id} by user ${req.params.user_id}!\n${error.message}`);
@@ -95,6 +106,7 @@ app.get('/story/:story_id/chapters', async(req, res) => {
     const allChapters = await pool.query(`
       SELECT title, updated_date FROM chapter WHERE story = $1;
     `, req.params.story_id);
+    res.json(allChapters.rows);
   }
   catch(error) {
     console.error(error.message);
@@ -109,7 +121,7 @@ app.post('/user/:username/story/:story_id/chapter', async(req, res) => {
       INSERT INTO chapter (title, story_id, chapter_text)
       VALUES($1, $2, $3);
     `, [title, story_id, chapter_text]);
-    res.json(newChapter);
+    res.json(newChapter.rows);
   }
   catch(error) {
     console.error(error.message);
@@ -124,6 +136,7 @@ app.get('/story/:title/chapter/:chapter_id', async(req, res) => {
       FROM chapter
       WHERE chapter_id = $1
     `, [req.params.chapter_id]);
+    res.json(chapter.rows);
   }
   catch(error) {
     console.error(error.message);
