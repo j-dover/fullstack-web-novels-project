@@ -1,4 +1,14 @@
-# Webvel - For Web Novel Writers and Readers
+# Webvel - For Online Writers and Readers
 
 ## What is Webvel?
-Webvel is a web application for sharing web novels and short stories online. Webvel provides an online place for writers to share their written works with readers. Readers can interact with writers by following their works and providing feedback.
+Webvel is a web application for sharing stories online. This application provides an online place for users to share their written works. Users can navigate through Webvel to explore new stories to read.
+
+## Technologies Used
+- [PostgreSQL](https://www.postgresql.org/)
+- [Express](https://expressjs.com/)
+- [React](https://reactjs.org/)
+- [Node](https://nodejs.org/en/)
+
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
