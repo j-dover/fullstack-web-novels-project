@@ -17,6 +17,19 @@ app.get('/', (req, res) => {
   res.json({ info: 'This is a test!'});
 });
 
+app.get('/user/:username', async(req, res) => {
+  try {
+    const user = await pool.query(`
+      SELECT user_id, username
+      FROM user_account
+      WHERE username = $1;
+    `, [req.params.username]);
+    res.json(user.rows);
+  } catch(error) {
+    console.error(error.message);
+  }
+});
+
 // Get all Stories
 app.get('/stories', async(req, res) => {
   try {
@@ -36,7 +49,7 @@ app.get('/stories', async(req, res) => {
 app.get('/user/:username/stories', async(req, res) => {
   try {
     const userStories = await pool.query(`
-      SELECT user_account.username, story.title, story.summary, story.creation_date 
+      SELECT story.story_id, story.title, story.summary, user_account.username, story.creation_date 
       FROM story
       RIGHT JOIN user_account
       ON user_account.user_id = story.user_id
