@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Button from 'react-bootstrap/Button';
+import { ListGroup } from 'react-bootstrap';
 
 const StoryList = (props) => {
   console.log('Receive prop ', props.username);
@@ -20,15 +20,16 @@ const StoryList = (props) => {
   }, []);
 
   return (
-    <div>
-      <ul>
-        {stories.map(item => (
-          <li key={item.story_id}>
-            {item.title} by {item.username}
-          </li>
+    <section className="storylist">
+      <h2 className="storylist__title">Stories</h2>
+      <ListGroup variant="flush">
+        {stories.map(story => (
+        <ListGroup.Item action key={story.story_id}>
+          {story.title} by {story.username}
+        </ListGroup.Item>
         ))}
-      </ul>
-    </div>
+      </ListGroup>
+    </section>
   );
 }
 
