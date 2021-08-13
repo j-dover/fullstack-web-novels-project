@@ -47,7 +47,11 @@ app.get('/user/:username', async(req, res) => {
 //   }
 // });
 
-app.get('/stories', (req, res) => getAllStories(req, res));
+app.get('/stories', async (req, res, next) => {
+  var stories = await getAllStories();
+  console.log('Stories from app.get: ', stories);
+  res.json(stories);
+});
 
 // Get a particular user's stories
 app.get('/user/:username/stories', async(req, res) => {

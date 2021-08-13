@@ -18,8 +18,8 @@ class Story {
 
   // Retrieve all stories from database and 
   async getAllStories() {
-    let stories = [];
-    console.log('Stories before: ', stories);
+    let allStories = {};
+    console.log('Stories before: ', allStories);
 
     await pool.query(`
       SELECT story.story_id, story.title, user_account.username 
@@ -32,21 +32,10 @@ class Story {
           // for (row in queryResults.rows) {
           //   stories.push(row);
           // }
-          return results;
+          allStories.stories = results.rows;
         })
-      .catch(e => console.error(e.stack))
-    // Add story object data to array 
-    // queryResults.rows.forEach(story => {
-    //   stories.push(Story(story));
-    // });
-
-    // for (row in queryResults.rows) {
-    //   stories.push(row);
-    // }
-
-    // console.log('Stories from db: ' + stories);
-
-    // return stories;
+      .catch(e => console.error('Error executing query', e.stack))
+    return allStories;
   }
 }
 
