@@ -3,6 +3,8 @@ const cors = require('cors');
 const app = express();
 const pool = require('./db');
 const { query } = require('express');
+const { getAllStories } = require('./controllers/StoryController');
+
 const port = 5000;
 
 // Middleware
@@ -31,19 +33,21 @@ app.get('/user/:username', async(req, res) => {
 });
 
 // Get all Stories
-app.get('/stories', async(req, res) => {
-  try {
-    const allStories = await pool.query(`
-      SELECT story.story_id, story.title, user_account.username 
-      FROM story
-      INNER JOIN user_account
-      ON user_account.user_id = story.user_id;`);
-    console.log(allStories.rows);
-    res.json(allStories.rows);
-  } catch(error) {
-    console.error(error.message);
-  }
-});
+// app.get('/stories', async(req, res) => {
+//   try {
+//     const allStories = await pool.query(`
+//       SELECT story.story_id, story.title, user_account.username 
+//       FROM story
+//       INNER JOIN user_account
+//       ON user_account.user_id = story.user_id;`);
+//     console.log(allStories.rows);
+//     res.json(allStories.rows);
+//   } catch(error) {
+//     console.error(error.message);
+//   }
+// });
+
+app.get('/stories', (req, res) => getAllStories(req, res));
 
 // Get a particular user's stories
 app.get('/user/:username/stories', async(req, res) => {
