@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 const pool = require('./db');
 const { query } = require('express');
-const { getAllStories } = require('./controllers/StoryController');
+const storyController = require('./controllers/StoryController');
 
 const port = 5000;
 
@@ -48,22 +48,33 @@ app.get('/user/:username', async(req, res) => {
 // });
 
 app.get('/stories', async (req, res, next) => {
-  var stories = await getAllStories();
+  var stories = await storyController.getAllStories();
   console.log('Stories from app.get: ', stories);
   res.json(stories);
 });
 
 // Get a particular user's stories
+// app.get('/user/:username/stories', async(req, res) => {
+//   try {
+//     const userStories = await pool.query(`
+//       SELECT story.story_id, story.title, story.summary, user_account.username, story.creation_date 
+//       FROM story
+//       RIGHT JOIN user_account
+//       ON user_account.user_id = story.user_id
+//       WHERE user_account.username = $1;`, [req.params.username]);
+//     console.log(userStories.rows);
+//     res.json(userStories.rows);
+//   }
+//   catch(error) {
+//     console.error(error.message);
+//   }
+// });
+
 app.get('/user/:username/stories', async(req, res) => {
   try {
-    const userStories = await pool.query(`
-      SELECT story.story_id, story.title, story.summary, user_account.username, story.creation_date 
-      FROM story
-      RIGHT JOIN user_account
-      ON user_account.user_id = story.user_id
-      WHERE user_account.username = $1;`, [req.params.username]);
-    console.log(userStories.rows);
-    res.json(userStories.rows);
+    var stories = await storyController.getAllStoriesByUsername(req.params.username);
+    console.log('Stories from app.get: ', stories);
+    res.json(stories);
   }
   catch(error) {
     console.error(error.message);
