@@ -6,7 +6,7 @@ const pool = require('../db');
 class Story {
   /**
    * Constructs Story object for acting as a data model
-   * @param {object} arg1 An argument that is an object
+   * @param {object} arg1 Request object containing data
    */
   constructor(story) {
     if (story === null || story === undefined) {
@@ -32,9 +32,6 @@ class Story {
    * Queries database for all stories and adds them to the story model
    */
   async getAllStories() {
-    // allStories = {};
-    console.log('Stories before: ', this.allStories);
-
     await pool.query(`
       SELECT story.story_id, story.title, user_account.username 
       FROM story
@@ -42,9 +39,8 @@ class Story {
       ON user_account.user_id = story.user_id;`)
       .then(
         results => {
-          console.log("Rows: ", results.rows);
+          console.log("Story Rows: ", results.rows);
           this.allStories = results.rows;
-          console.log("this.allStories: ", this.allStories);
         })
       .catch(error => console.error('Error: Query Execution\n', error.stack));
   }
@@ -53,10 +49,7 @@ class Story {
    * Queries database for all stories by username and adds them to the story model
    * @param {string} username arg1 Username of the story author
    */
-  async getAllStoriesByUsername(username) {
-    let allStories = {};
-    console.log('Stories before: ', allStories);
-    
+  async getAllStoriesByUsername(username) {    
     await pool.query(`
     SELECT story.story_id, story.title, story.summary, user_account.username, story.creation_date 
     FROM story
@@ -65,12 +58,29 @@ class Story {
     WHERE user_account.username = $1;`, [username])
     .then(
       results => {
-        console.log("Rows: ", results.rows);
+        console.log("Story Rows: ", results.rows);
         this.allStories = results.rows;
-        console.log("this.allStories: ", this.allStories);
       }
     )
-    .catch(error => console.error('Error: Query Execution\n', error.stack));
+    .catch(error => console.error(`Error: getAllStoriesByUsername for user ${username}\n`, error.message, error.stack));
+  }
+
+  async getStoryByTitle(title) {
+    await pool.query(`
+    SELECT story.title, story.summary, user_account.username
+    FROM story
+    RIGHT JOIN user_account
+    ON user_account.user_id = story.user_id
+    WHERE story.title = $1`, [title])
+    .then(
+      results => {
+        console.log("Story Row: ", results.rows);
+        this.title = results.rows[0].title;
+        this.summary = results.rows[0].summary;
+        this.user_account = results.rows[0].user_account;
+      }
+    )
+    .catch(error => console.error(`Error: getStoryByTitle for title ${title}\n`, error.message, error.stack))
   }
 }
 

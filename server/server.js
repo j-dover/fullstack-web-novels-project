@@ -49,7 +49,7 @@ app.get('/user/:username', async(req, res) => {
 
 app.get('/stories', async (req, res, next) => {
   var stories = await storyController.getAllStories();
-  console.log('Stories from app.get: ', stories);
+  // console.log('Stories from app.get: ', stories);
   res.json(stories);
 });
 
@@ -73,13 +73,20 @@ app.get('/stories', async (req, res, next) => {
 app.get('/user/:username/stories', async(req, res) => {
   try {
     var stories = await storyController.getAllStoriesByUsername(req.params.username);
-    console.log('Stories from app.get: ', stories);
+    // console.log('Stories from app.get: ', stories);
     res.json(stories);
-  }
-  catch(error) {
+  } catch(error) {
     console.error(error.message);
   }
 });
+
+// Get a story by title
+app.get('/story/:title', async(req, res) => {
+  var story = await storyController.getStoryByTitle(req.params.title);
+  res.json(story);
+});
+
+
 
 // Create a story
 app.post('/story', async (req, res) => {
