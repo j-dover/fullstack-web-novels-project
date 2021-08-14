@@ -57,8 +57,25 @@ const getStoryByTitle = async(title) => {
     // Create new story model
     console.log('Story data: ', story_data);
     const storyModel = new Story(story_data);
-    console.log(storyModel);
     await storyModel.createNewStory();
+    return storyModel;
+  } catch(error) {
+    console.error(error.message);
+  }
+}
+
+/**
+ * Uses the model to update a user's story from the database
+ * @param {object} story_data 
+ * @return {Story object}
+ */
+ const updateStory = async(updateData, currentTitle) => {
+  try {
+    // Update a story model's properties
+    console.log('Story data for update: ', updateData);
+    const storyModel = new Story(updateData);
+    console.log(updateData);
+    await storyModel.updateStory(currentTitle);
     return storyModel;
   } catch(error) {
     console.error(error.message);
@@ -69,5 +86,6 @@ module.exports = {
   getAllStories,
   getAllStoriesByUsername,
   getStoryByTitle,
-  createNewStory
+  createNewStory,
+  updateStory
 }

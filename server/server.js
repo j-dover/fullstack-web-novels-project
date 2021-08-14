@@ -36,16 +36,18 @@ app.get('/user/:username', async(req, res) => {
 
 // Get all stories
 app.get('/stories', async (req, res, next) => {
-  const stories = await storyController.getAllStories();
-  // console.log('Stories from app.get: ', stories);
-  res.json(stories);
+  try {
+    const stories = await storyController.getAllStories();
+    res.json(stories);
+  } catch(error) {
+    console.error(error.message);
+  }
 });
 
 // Get all stories by user
 app.get('/user/:username/stories', async(req, res) => {
   try {
     const stories = await storyController.getAllStoriesByUsername(req.params.username);
-    // console.log('Stories from app.get: ', stories);
     res.json(stories);
   } catch(error) {
     console.error(error.message);
@@ -54,11 +56,15 @@ app.get('/user/:username/stories', async(req, res) => {
 
 // Get a story by title
 app.get('/story/:title', async(req, res) => {
-  var story = await storyController.getStoryByTitle(req.params.title);
-  res.json(story);
+  try {
+    var story = await storyController.getStoryByTitle(req.params.title);
+    res.json(story);
+  } catch(error) {
+    console.error(error.message);
+  }
 });
 
-// Create a story
+// Create a new story
 app.post('/story/create', async (req, res) => {
   try {
     console.log('Create new story ', req.body.title);
@@ -69,23 +75,31 @@ app.post('/story/create', async (req, res) => {
   }
 });
 
-// Update a story from user
-app.put('/user/:user_id/story/:story_id', async(req, res, next) => {
+// Update a story => ?story=story_id
+app.put('/story/:title/update', async(req, res, next) => {
   try {
-    const { title, user_id, summary, genre } = req.body;
-    console.log(`Update story - Title: ${title}, Author: ${user_id}, Summary: ${summary}, Genre: ${genre}`);
-    const updatedStory = await pool.query(`
-      UPDATE story SET title = $1, summary = $2, genre = $3
-      WHERE story_id = $4 AND user_id = $5 
-      RETURNING story_id`, [title, summary, genre, req.params.story_id, req.params.user_id]);
-    if (updatedStory.rowCount === 0) {
-      console.error(`Error: story_id ${req.params.story_id} cannot be found. User ${req.params.user_id} may not be the story's author.`);
-      next();
-    }
-    else {
-      console.log(`Updated information: Title: ${title}, Summary: ${summary}`);
-      res.json(updatedStory.rows);
-    }
+    console.log(`Update story ${req.params.title}, id ${req.query.story}`);
+
+    // Add to story_id to request body
+    req.body.story_id = req.query.story;
+    const updatedStory = await storyController.updateStory(req.body, req.params.title);
+
+    res.json(updatedStory);
+
+    // const { title, user_id, summary } = req.body;
+    // console.log(`Update story - Title: ${title}, Author: ${user_id}, Summary: ${summary}, Genre: ${genre}`);
+    // const updatedStory = await pool.query(`
+    //   UPDATE story SET title = $1, summary = $2, genre = $3
+    //   WHERE story_id = $4 AND user_id = $5 
+    //   RETURNING story_id`, [title, summary, genre, req.params.story_id, req.params.user_id]);
+    // if (updatedStory.rowCount === 0) {
+    //   console.error(`Error: story_id ${req.params.story_id} cannot be found. User ${req.params.user_id} may not be the story's author.`);
+    //   next();
+    // }
+    // else {
+    //   console.log(`Updated information: Title: ${title}, Summary: ${summary}`);
+    //   res.json(updatedStory.rows);
+    // }
   }
   catch(error) {
     console.error(error.message);
