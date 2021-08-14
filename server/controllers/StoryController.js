@@ -17,7 +17,7 @@ const getAllStories = async() => {
 
 /**
  * Interacts with the model to obtain a user's stories from the database
- * @param {string} username arg1 Username of the story author
+ * @param {string} username Username of the story author
  * @return {Story object}
  */
 const getAllStoriesByUsername = async(username) => {
@@ -33,7 +33,7 @@ const getAllStoriesByUsername = async(username) => {
 
 /**
  * Interacts with the model to obtain a story by its title from the database
- * @param {string} title arg1 Title of a story
+ * @param {string} title Title of a story
  * @return {Story object}
  */
 const getStoryByTitle = async(title) => {
@@ -47,8 +47,27 @@ const getStoryByTitle = async(title) => {
   }
 }
 
+/**
+ * Uses the model to insert a new story into the database
+ * @param {object} story_data 
+ * @return {Story object}
+ */
+ const createNewStory = async(story_data) => {
+  try {
+    // Create new story model
+    console.log('Story data: ', story_data);
+    const storyModel = new Story(story_data);
+    console.log(storyModel);
+    await storyModel.createNewStory();
+    return storyModel;
+  } catch(error) {
+    console.error(error.message);
+  }
+}
+
 module.exports = {
   getAllStories,
   getAllStoriesByUsername,
-  getStoryByTitle
+  getStoryByTitle,
+  createNewStory
 }

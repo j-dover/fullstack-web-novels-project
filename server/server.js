@@ -15,10 +15,12 @@ app.use(cors());
 
 // Routes
 
+// Get stories for home page
 app.get('/', (req, res) => {
   res.json({ info: 'This is a test!'});
 });
 
+// Get user profile data
 app.get('/user/:username', async(req, res) => {
   try {
     const user = await pool.query(`
@@ -32,47 +34,17 @@ app.get('/user/:username', async(req, res) => {
   }
 });
 
-// Get all Stories
-// app.get('/stories', async(req, res) => {
-//   try {
-//     const allStories = await pool.query(`
-//       SELECT story.story_id, story.title, user_account.username 
-//       FROM story
-//       INNER JOIN user_account
-//       ON user_account.user_id = story.user_id;`);
-//     console.log(allStories.rows);
-//     res.json(allStories.rows);
-//   } catch(error) {
-//     console.error(error.message);
-//   }
-// });
-
+// Get all stories
 app.get('/stories', async (req, res, next) => {
-  var stories = await storyController.getAllStories();
+  const stories = await storyController.getAllStories();
   // console.log('Stories from app.get: ', stories);
   res.json(stories);
 });
 
-// Get a particular user's stories
-// app.get('/user/:username/stories', async(req, res) => {
-//   try {
-//     const userStories = await pool.query(`
-//       SELECT story.story_id, story.title, story.summary, user_account.username, story.creation_date 
-//       FROM story
-//       RIGHT JOIN user_account
-//       ON user_account.user_id = story.user_id
-//       WHERE user_account.username = $1;`, [req.params.username]);
-//     console.log(userStories.rows);
-//     res.json(userStories.rows);
-//   }
-//   catch(error) {
-//     console.error(error.message);
-//   }
-// });
-
+// Get all stories by user
 app.get('/user/:username/stories', async(req, res) => {
   try {
-    var stories = await storyController.getAllStoriesByUsername(req.params.username);
+    const stories = await storyController.getAllStoriesByUsername(req.params.username);
     // console.log('Stories from app.get: ', stories);
     res.json(stories);
   } catch(error) {
@@ -86,18 +58,12 @@ app.get('/story/:title', async(req, res) => {
   res.json(story);
 });
 
-
-
 // Create a story
-app.post('/story', async (req, res) => {
+app.post('/story/create', async (req, res) => {
   try {
-    const { title, user_id, summary, genre } = req.body;
-    console.log(`Create story - Title: ${title}, Author: ${user_id}, Summary: ${summary}, Genre: ${genre}`);
-    const newStory = await pool.query(`
-    INSERT INTO story(title, user_id, summary, genre) 
-    VALUES ($1, $2, $3, $4) 
-    RETURNING *`, [title, user_id, summary, genre]);
-    res.json(newStory.rows);
+    console.log('Create new story ', req.body.title);
+    const newStory = await storyController.createNewStory(req.body);
+    res.json(newStory);
   } catch (error) {
     console.error(error.message);
   }

@@ -6,7 +6,7 @@ const pool = require('../db');
 class Story {
   /**
    * Constructs Story object for acting as a data model
-   * @param {object} arg1 Request object containing data
+   * @param {object} story Request object containing data
    */
   constructor(story) {
     if (story === null || story === undefined) {
@@ -14,14 +14,14 @@ class Story {
       this.allStories = [];
     }
     else {
-      /** @private @const {object array} */
+      /** @private @const {number} */
       this.story_id = story.story_id;
 
       /** @private @const {number} */
-      this.user_id = story.user_id;
+      this.title = story.title;
 
       /** @private @const {number} */
-      this.title = story.title_id;
+      this.user_id = story.user_id;
 
       /** @private @const {string} */
       this.summary = story.summary;
@@ -51,7 +51,7 @@ class Story {
    */
   async getAllStoriesByUsername(username) {    
     await pool.query(`
-    SELECT story.story_id, story.title, story.summary, user_account.username, story.creation_date 
+    SELECT story.story_id, story.title, story.summary, user_account.username
     FROM story
     RIGHT JOIN user_account
     ON user_account.user_id = story.user_id
@@ -65,6 +65,10 @@ class Story {
     .catch(error => console.error(`Error: getAllStoriesByUsername for user ${username}\n`, error.message, error.stack));
   }
 
+  /**
+   * Queries database for all stories by username and adds them to the story model
+   * @param {string} title Title of the story
+   */
   async getStoryByTitle(title) {
     await pool.query(`
     SELECT story.title, story.summary, user_account.username
@@ -73,15 +77,36 @@ class Story {
     ON user_account.user_id = story.user_id
     WHERE story.title = $1`, [title])
     .then(
-      results => {
-        console.log("Story Row: ", results.rows);
-        this.title = results.rows[0].title;
-        this.summary = results.rows[0].summary;
-        this.user_account = results.rows[0].user_account;
+      result => {
+        console.log("Story Row: ", result.rows);
+        this.title = result.rows[0].title;
+        this.summary = result.rows[0].summary;
+        this.username = result.rows[0].username;
       }
     )
-    .catch(error => console.error(`Error: getStoryByTitle for title ${title}\n`, error.message, error.stack))
+    .catch(error => console.error(`Error: getStoryByTitle for title ${title}\n`, error.message, error.stack));
   }
+
+  /**
+   * Inserts new story into the database 
+   */
+   async createNewStory() {
+    await pool.query(`
+    INSERT INTO story(title, user_id, summary) 
+    VALUES ($1, $2, $3) 
+    RETURNING *`, [this.title, this.user_id, this.summary])
+    .then(
+      result => {
+        console.log("New story: ", result.rows);
+        this.story_id = result.rows[0].story_id;
+        this.title = result.rows[0].title;
+        this.summary = result.rows[0].summary;
+        this.user_id = result.row[0].user_id;
+        this.creation_date = result.row[0].creation_date;
+      }
+    )
+    .catch(error => console.error(`Error: createNewStory for title ${this.title}\n`, error.message, error.stack));
+  }  
 }
 
 module.exports = Story;
