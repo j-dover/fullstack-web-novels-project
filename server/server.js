@@ -4,6 +4,7 @@ const app = express();
 const pool = require('./db');
 const { query } = require('express');
 const storyController = require('./controllers/StoryController');
+const chapterController = require('./controllers/ChapterController');
 
 const port = 5000;
 
@@ -103,6 +104,7 @@ app.put('/story/:title/update', async(req, res, next) => {
   }
   catch(error) {
     console.error(error.message);
+    
   }
 });
 
@@ -119,8 +121,19 @@ app.delete('/user/:user_id/story/:story_id', async(req, res) => {
 });
 
 
-// Get all chapters from a story
-app.get('/story/:story_id/chapters', async(req, res) => {
+// Get all chapters from a story by story id
+app.get('/story/:story_id/chapters', async(req, res) => {  
+  try {
+    var allChapters = await chapterController.getAllChaptersByStoryId(req.params.story_id);
+    res.json(allChapters);
+  }
+  catch(error) {
+    console.error(error.message);
+  }
+});
+
+/*
+app.get('/story/:title/chapters', async(req, res) => {
   try {
     const allChapters = await pool.query(`
       SELECT title, updated_date FROM chapter WHERE story = $1;
@@ -130,7 +143,8 @@ app.get('/story/:story_id/chapters', async(req, res) => {
   catch(error) {
     console.error(error.message);
   }
-});
+}); */
+
 
 // Create a chapter
 app.post('/user/:username/story/:story_id/chapter', async(req, res) => {
