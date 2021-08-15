@@ -84,27 +84,10 @@ app.put('/story/:story_title/update', async(req, res, next) => {
     // Add to story_id to request body
     req.body.story_id = req.query.story;
     const updatedStory = await storyController.updateStory(req.body, req.params.story_title);
-
     res.json(updatedStory);
-
-    // const { title, user_id, summary } = req.body;
-    // console.log(`Update story - Title: ${title}, Author: ${user_id}, Summary: ${summary}, Genre: ${genre}`);
-    // const updatedStory = await pool.query(`
-    //   UPDATE story SET title = $1, summary = $2, genre = $3
-    //   WHERE story_id = $4 AND user_id = $5 
-    //   RETURNING story_id`, [title, summary, genre, req.params.story_id, req.params.user_id]);
-    // if (updatedStory.rowCount === 0) {
-    //   console.error(`Error: story_id ${req.params.story_id} cannot be found. User ${req.params.user_id} may not be the story's author.`);
-    //   next();
-    // }
-    // else {
-    //   console.log(`Updated information: Title: ${title}, Summary: ${summary}`);
-    //   res.json(updatedStory.rows);
-    // }
   }
   catch(error) {
-    console.error(error.message);
-    
+    console.error(error.message);  
   }
 });
 
@@ -144,14 +127,16 @@ app.post('/story/:story_id/chapter', async(req, res) => {
   }
 });
 
-// Read a chapter
-app.get('/story/:title/chapter/:chapter_id', async(req, res) => {
+// Get a chapter by its ID
+app.get('/story/:story_title/chapter/:chapter_id', async(req, res) => {
   try {
-    const chapter = await pool.query(`
-      SELECT title, chapter_text 
-      FROM chapter
-      WHERE chapter_id = $1
-    `, [req.params.chapter_id]);
+    // const chapter = await pool.query(`
+    //   SELECT title, chapter_text 
+    //   FROM chapter
+    //   WHERE chapter_id = $1
+    // `, [req.params.chapter_id]);
+
+    var chapter = await chapterController.getChapterByChapterId(req.params.chapter_id);
     res.json(chapter.rows);
   }
   catch(error) {

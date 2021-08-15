@@ -11,16 +11,32 @@ var Chapter = require('../models/ChapterModel.js');
  * @param {int} story_id ID number of a story
  * @return {Chapter object}
  */
-const getAllChaptersByStoryId = async(story_id) => {
+const getAllChaptersByStoryId = async(storyId) => {
   try {
     // Use chapter model to obtain all chapters
     const chapterModel = new Chapter();
-    await chapterModel.getAllChaptersByStoryId(story_id);
+    await chapterModel.getAllChaptersByStoryId(storyId);
     return chapterModel;
   } catch(error) {
     console.error(error.message);
   }  
 }
+
+/**
+ * Interacts with the model to obtain a chapter by its id from the database
+ * @param {int} chapter_id ID number of chapter
+ * @return {Chapter object}
+ */
+ const getChapterByChapterId = async(chapterId) => {
+  try {
+    // Use chapter model to obtain a chapter
+    const chapterModel = new Chapter();
+    chapterModel.chapter_id = chapterId;
+    await chapterModel.getChapterByID();
+    return chapterModel;
+  } catch(error) {
+    console.error(error.message);
+  }
 
 /**
  * Uses the model to insert a new chapter into the database
@@ -41,5 +57,6 @@ const getAllChaptersByStoryId = async(story_id) => {
 
 module.exports = {
   getAllChaptersByStoryId,
-  createNewChapter
+  getChapterByChapterId,
+  createNewChapter,
 }

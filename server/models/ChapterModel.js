@@ -33,7 +33,7 @@ class Chapter {
    */
   async getAllChaptersByStoryId(story_id) {    
     await pool.query(`
-    SELECT chapter.chapter_id, chapter.chapter_title, chapter.chapter_text, story.story_title
+    SELECT chapter.chapter_id, chapter.chapter_title, story.story_title, updated_date
     FROM chapter
     RIGHT JOIN story
     ON story.story_id = chapter.story_id
@@ -45,6 +45,27 @@ class Chapter {
       }
     )
     .catch(error => console.error(`Error: getAllChaptersByStoryId for story ${story_id}\n`, error.message, error.stack));
+  }
+
+  /**
+   * Queries the database with a chapter's title and adds chapter data to the model
+   */
+   async getChapterByChapterId() {
+    await pool.query(`
+    SELECT chapter.chapter_title, chapter.chapter_text, story.story_title
+    FROM chapter
+    RIGHT JOIN story
+    ON story.story_id = story.story_id
+    WHERE chapter.chapter_title = $1`, [this.chapter_id])
+    .then(
+      result => {
+        console.log('Chapter Row: ', result.rows);
+        this.chapter_title = result.rows[0].chapter_title;
+        this.chapter_text = result.rows[0].chapter_text;
+        this.story_title = result.rows[0].story_title;
+      }
+    )
+    .catch(error => console.error(`Error: getChapterByTitle for title ${title}\n`, error.message, error.stack));
   }
 
   /**
@@ -62,7 +83,7 @@ class Chapter {
           this.chapte_title = result.rows[0].chapter_title;
           this.chapter_text = result.rows[0].chapter_text;
           this.story_id = result.rows[0].story_id;
-          this.creation_date = result.rows[0].creation_date;
+          this.updated_date = result.rows[0].updated_date;
         }
       )
       .catch(error => console.error(`Error: createNewChapter for title ${this.chapter_title}, id: ${this.chapter_id}\n`, error.message, error.stack));
