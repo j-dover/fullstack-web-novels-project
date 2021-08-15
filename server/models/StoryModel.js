@@ -17,7 +17,7 @@ class Story {
       this.story_id = story.story_id || null;
 
       /** @private @const {number} */
-      this.title = story.title || null;
+      this.story_title = story.story_title || null;
 
       /** @private @const {number} */
       this.user_id = story.user_id || null;
@@ -32,7 +32,7 @@ class Story {
    */
   async getAllStories() {
     await pool.query(`
-      SELECT story.story_id, story.title, user_account.username 
+      SELECT story.story_id, story.story_title, user_account.username 
       FROM story
       INNER JOIN user_account
       ON user_account.user_id = story.user_id;`)
@@ -50,7 +50,7 @@ class Story {
    */
   async getAllStoriesByUsername(username) {    
     await pool.query(`
-    SELECT story.story_id, story.title, story.summary, user_account.username
+    SELECT story.story_id, story.story_title, story.summary, user_account.username
     FROM story
     RIGHT JOIN user_account
     ON user_account.user_id = story.user_id
@@ -66,24 +66,24 @@ class Story {
 
   /**
    * Queries the database with a story's title and adds story data to the model
-   * @param {string} title Title of the story
+   * @param {string} storyTitle Title of the story
    */
-  async getStoryByTitle(title) {
+  async getStoryByTitle(storyTitle) {
     await pool.query(`
-    SELECT story.title, story.summary, user_account.username
+    SELECT story.story_title, story.summary, user_account.username
     FROM story
     RIGHT JOIN user_account
     ON user_account.user_id = story.user_id
-    WHERE story.title = $1`, [title])
+    WHERE story.story_title = $1`, [storyTitle])
     .then(
       result => {
         console.log('Story Row: ', result.rows);
-        this.title = result.rows[0].title;
+        this.story_title = result.rows[0].story_title;
         this.summary = result.rows[0].summary;
         this.username = result.rows[0].username;
       }
     )
-    .catch(error => console.error(`Error: getStoryByTitle for title ${title}\n`, error.message, error.stack));
+    .catch(error => console.error(`Error: getStoryByTitle for title ${storyTitle}\n`, error.message, error.stack));
   }
 
   /**
@@ -93,34 +93,35 @@ class Story {
     await pool.query(`
     INSERT INTO story(title, user_id, summary) 
     VALUES ($1, $2, $3) 
-    RETURNING *`, [this.title, this.user_id, this.summary])
+    RETURNING *`, [this.story_title, this.user_id, this.summary])
     .then(
       result => {
         console.log('New story: ', result.rows);
         this.story_id = result.rows[0].story_id;
-        this.title = result.rows[0].title;
+        this.story_title = result.rows[0].story_title;
         this.summary = result.rows[0].summary;
         this.user_id = result.rows[0].user_id;
         this.creation_date = result.rows[0].creation_date;
       }
     )
-    .catch(error => console.error(`Error: createNewStory for title ${this.title}, id: ${this.story_id}\n`, error.message, error.stack));
+    .catch(error => console.error(`Error: createNewStory for title ${this.story_title}, id: ${this.story_id}\n`, error.message, error.stack));
   }
 
   /**
    * Updates a story from the database
    */
-   async updateStory(currentTitle) {
+   async updateStory(currentStoryTitle) {
+    console.log(currentStoryTitle, this.story_title);
     await pool.query(`
-    UPDATE story SET title = $1, summary = $2
-    WHERE story_id = $3 AND title = $4
-    RETURNING *;`, [this.title, this.summary, this.story_id, currentTitle])
+    UPDATE story SET story_title = $1, summary = $2
+    WHERE story_id = $3 AND story_title = $4
+    RETURNING *;`, [this.story_title, this.summary, this.story_id, currentStoryTitle])
     .then(
       result => {
         console.log("Updated story: ", result.rows);
         
         this.story_id = result.rows[0].story_id;
-        this.title = result.rows[0].title;
+        this.story_title = result.rows[0].story_title;
         this.user_id = result.rows[0].user_id;
         this.summary = result.rows[0].summary;
 
@@ -133,7 +134,7 @@ class Story {
     // }
       }
     )
-    .catch(error => console.error(`Error: updateStory for title ${this.title} \n`, error.message, error.stack));
+    .catch(error => console.error(`Error: updateStory for title ${this.story_title} \n`, error.message, error.stack));
   }
 
 }

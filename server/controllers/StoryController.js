@@ -36,11 +36,11 @@ const getAllStoriesByUsername = async(username) => {
  * @param {string} title Title of a story
  * @return {Story object}
  */
-const getStoryByTitle = async(title) => {
+const getStoryByTitle = async(storyTitle) => {
   try {
     // Use story model to obtain a story
     const storyModel = new Story();
-    await storyModel.getStoryByTitle(title);
+    await storyModel.getStoryByTitle(storyTitle);
     return storyModel;
   } catch(error) {
     console.error(error.message);
@@ -52,11 +52,11 @@ const getStoryByTitle = async(title) => {
  * @param {object} story_data 
  * @return {Story object}
  */
- const createNewStory = async(story_data) => {
+ const createNewStory = async(storyData) => {
   try {
     // Create new story model
-    console.log('Story data: ', story_data);
-    const storyModel = new Story(story_data);
+    console.log('Story data: ', storyData);
+    const storyModel = new Story(storyData);
     await storyModel.createNewStory();
     return storyModel;
   } catch(error) {
@@ -72,7 +72,7 @@ const getStoryByTitle = async(title) => {
  const updateStory = async(updateData, currentTitle) => {
   try {
     // Update a story model's properties
-    console.log('Story data for update: ', updateData);
+    console.log('Story data for update: ', updateData.story_title);
     const storyModel = new Story(updateData);
     console.log(updateData);
     await storyModel.updateStory(currentTitle);

@@ -56,9 +56,9 @@ app.get('/user/:username/stories', async(req, res) => {
 });
 
 // Get a story by title
-app.get('/story/:title', async(req, res) => {
+app.get('/story/:story_title', async(req, res) => {
   try {
-    var story = await storyController.getStoryByTitle(req.params.title);
+    var story = await storyController.getStoryByTitle(req.params.story_title);
     res.json(story);
   } catch(error) {
     console.error(error.message);
@@ -76,14 +76,14 @@ app.post('/story/create', async (req, res) => {
   }
 });
 
-// Update a story => ?story=story_id
-app.put('/story/:title/update', async(req, res, next) => {
+// Update a story with story query set to story id: ?story=story_id
+app.put('/story/:story_title/update', async(req, res, next) => {
   try {
-    console.log(`Update story ${req.params.title}, id ${req.query.story}`);
+    console.log(`Update story ${req.params.story_title}, id ${req.query.story}`);
 
     // Add to story_id to request body
     req.body.story_id = req.query.story;
-    const updatedStory = await storyController.updateStory(req.body, req.params.title);
+    const updatedStory = await storyController.updateStory(req.body, req.params.story_title);
 
     res.json(updatedStory);
 
