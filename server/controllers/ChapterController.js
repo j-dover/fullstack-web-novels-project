@@ -27,7 +27,7 @@ const getAllChaptersByStoryId = async(storyId) => {
  * @param {int} chapter_id ID number of chapter
  * @return {Chapter object}
  */
- const getChapterByChapterId = async(chapterId) => {
+const getChapterByChapterId = async(chapterId) => {
   try {
     // Use chapter model to obtain a chapter
     const chapterModel = new Chapter();
@@ -37,13 +37,13 @@ const getAllChaptersByStoryId = async(storyId) => {
   } catch(error) {
     console.error(error.message);
   }
-
+}
 /**
  * Uses the model to insert a new chapter into the database
  * @param {object} chapter_data 
  * @return {Chapter object}
  */
- const createNewChapter = async(chapter_data) => {
+const createNewChapter = async(chapter_data) => {
   try {
     // Create new chapter model
     console.log('Chapter data: ', chapter_data);
@@ -58,5 +58,5 @@ const getAllChaptersByStoryId = async(storyId) => {
 module.exports = {
   getAllChaptersByStoryId,
   getChapterByChapterId,
-  createNewChapter,
+  createNewChapter
 }
