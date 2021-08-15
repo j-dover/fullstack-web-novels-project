@@ -11,7 +11,7 @@ const StoryList = (props) => {
       .then(
         (result) => {
           // set is loaded
-          setStories(result);
+          setStories(result.allStories);
         },
         (error) => {
           console.error(error);
