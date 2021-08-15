@@ -68,7 +68,7 @@ app.get('/story/:story_title', async(req, res) => {
 // Create a new story
 app.post('/story/create', async (req, res) => {
   try {
-    console.log('Create new story ', req.body.title);
+    console.log('Create new story ', req.body.story_title);
     const newStory = await storyController.createNewStory(req.body);
     res.json(newStory);
   } catch (error) {

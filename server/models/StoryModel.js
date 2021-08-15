@@ -91,7 +91,7 @@ class Story {
    */
    async createNewStory() {
     await pool.query(`
-    INSERT INTO story(title, user_id, summary) 
+    INSERT INTO story(story_title, user_id, summary) 
     VALUES ($1, $2, $3) 
     RETURNING *`, [this.story_title, this.user_id, this.summary])
     .then(
