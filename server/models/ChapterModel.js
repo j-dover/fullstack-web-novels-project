@@ -17,7 +17,7 @@ class Chapter {
       this.chapter_id = chapter.chapter_id || null;
 
       /** @private @const {number} */
-      this.title = chapter.chapter_title || null;
+      this.chapter_title = chapter.chapter_title || null;
 
       /** @private @const {number} */
       this.story_id = chapter.story_id || null;
@@ -46,6 +46,27 @@ class Chapter {
     )
     .catch(error => console.error(`Error: getAllChaptersByStoryId for story ${story_id}\n`, error.message, error.stack));
   }
+
+  /**
+   * Inserts new chapter into the database 
+   */
+     async createNewChapter() {
+      await pool.query(`
+      INSERT INTO chapter(chapter_title, story_id, chapter_text) 
+      VALUES ($1, $2, $3)
+      RETURNING *`, [this.chapter_title, this.story_id, this.chapter_text])
+      .then(
+        result => {
+          console.log('New chapter: ', result.rows);
+          this.chapter_id = result.rows[0].chapter_id;
+          this.chapte_title = result.rows[0].chapter_title;
+          this.chapter_text = result.rows[0].chapter_text;
+          this.story_id = result.rows[0].story_id;
+          this.creation_date = result.rows[0].creation_date;
+        }
+      )
+      .catch(error => console.error(`Error: createNewChapter for title ${this.chapter_title}, id: ${this.chapter_id}\n`, error.message, error.stack));
+    }
 }
 
 module.exports = Chapter;

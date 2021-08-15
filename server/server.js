@@ -132,29 +132,12 @@ app.get('/story/:story_id/chapters', async(req, res) => {
   }
 });
 
-/*
-app.get('/story/:title/chapters', async(req, res) => {
+// Create a chapter for a story
+app.post('/story/:story_id/chapter', async(req, res) => {
   try {
-    const allChapters = await pool.query(`
-      SELECT title, updated_date FROM chapter WHERE story = $1;
-    `, req.params.story_id);
-    res.json(allChapters.rows);
-  }
-  catch(error) {
-    console.error(error.message);
-  }
-}); */
-
-
-// Create a chapter
-app.post('/user/:username/story/:story_id/chapter', async(req, res) => {
-  try {
-    const {title, story_id, chapter_text} = req.body;
-    const newChapter = await pool.query(`
-      INSERT INTO chapter (title, story_id, chapter_text)
-      VALUES($1, $2, $3);
-    `, [title, story_id, chapter_text]);
-    res.json(newChapter.rows);
+    console.log("Chapter Data: ", req.body);
+    var newChapter = await chapterController.createNewChapter(req.body);
+    res.json(newChapter);
   }
   catch(error) {
     console.error(error.message);
