@@ -1,25 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {Button, Form} from 'react-bootstrap';
 import LoginForm from '../components/common/LoginForm';
-// import NavBar from '../components/common/NavBar';
+import SignInForm from '../components/common/SignInForm';
 
 const LogIn = () => {
+
+  // Use state to toggle between forms
+
   return (
     <div className="login">
-      <h1>Log In</h1>
-      <Form>
-        <Form.Group className="mb-3" controlId="username">
-          <Form.Label>Username</Form.Label>
-          <Form.Control type="username" placeholder="Username" />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Log In
-        </Button>
-      </Form>
+      <LoginForm/>
+      Don't have an account? Create one.
     </div>
   );
 }
