@@ -19,7 +19,7 @@ function LogInForm() {
         Log In
       </Button>
     </Form>
-  </>
+  </div>
   );
 }
 
