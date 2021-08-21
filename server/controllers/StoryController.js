@@ -1,15 +1,17 @@
-var Story = require('../models/StoryModel.js');
+var Story = require('../models/StoryModel');
 
 /**
  * Interacts with the model to obtain all of Webvel's stories from the database
- * @return {Story object}
+ * and sends a JSON response
+ * @param {object} req Object containing HTTP request data
+ * @param {object} res Object containing HTTP response data
  */
-const getAllStories = async() => {
+exports.getAllStories = async(req, res) => {
   try {
     // Use story model to obtain all stories
     const storyModel = new Story();
     await storyModel.getAllStories();
-    return storyModel;
+    res.json(storyModel);
   } catch(error) {
     console.error(error.message);
   }
@@ -17,31 +19,38 @@ const getAllStories = async() => {
 
 /**
  * Interacts with the model to obtain a user's stories from the database
- * @param {string} username Username of the story author
- * @return {Story object}
+ * and sends a JSON response
+ * @param {object} req Object containing HTTP request data
+ * @param {object} res Object containing HTTP response data
  */
-const getAllStoriesByUsername = async(username) => {
+exports.getAllStoriesByUserId = async(req, res) => {
   try {
     // Use story model to obtain all stories
     const storyModel = new Story();
-    await storyModel.getAllStoriesByUsername(username);
-    return storyModel;
+    await storyModel.getAllStoriesByUsername(req.params.username);
+    res.json(storyModel);
   } catch(error) {
     console.error(error.message);
   }  
 }
 
 /**
- * Interacts with the model to obtain a story by its title from the database
- * @param {string} title Title of a story
- * @return {Story object}
+ * Interacts with the model to obtain a story by its id from the database
+ * @param {object} req Object containing HTTP request data
+ * @param {object} res Object containing HTTP response data
  */
-const getStoryByTitle = async(storyTitle) => {
+exports.getStoryById = async(req, res, next) => {
   try {
     // Use story model to obtain a story
     const storyModel = new Story();
-    await storyModel.getStoryByTitle(storyTitle);
-    return storyModel;
+    storyModel.story_id = req.params.story_id;
+    await storyModel.getStoryById();
+    if (storyModel.story_title !== undefined && storyModel.story_title !== null) {
+      res.json(storyModel);
+    }
+    else {
+      next();
+    }
   } catch(error) {
     console.error(error.message);
   }
@@ -49,16 +58,16 @@ const getStoryByTitle = async(storyTitle) => {
 
 /**
  * Uses the model to insert a new story into the database
- * @param {object} story_data 
- * @return {Story object}
+ * @param {object} req Object containing HTTP request data
+ * @param {object} res Object containing HTTP response data
  */
- const createNewStory = async(storyData) => {
+exports.createNewStory = async(req, res) => {
   try {
     // Create new story model
-    console.log('Story data: ', storyData);
-    const storyModel = new Story(storyData);
+    console.log('Create new story data: ', req.body);
+    const storyModel = new Story(req.body);
     await storyModel.createNewStory();
-    return storyModel;
+    res.json(storyModel);
   } catch(error) {
     console.error(error.message);
   }
@@ -66,26 +75,20 @@ const getStoryByTitle = async(storyTitle) => {
 
 /**
  * Uses the model to update a user's story from the database
- * @param {object} story_data 
- * @return {Story object}
+ * @param {object} req Object containing HTTP request data
+ * @param {object} res Object containing HTTP response data
  */
- const updateStory = async(updateData, currentTitle) => {
+exports.updateStory = async(req, res) => {
   try {
+    console.log(`Update story id ${req.params.story_id}`);
+    // Add story id query to request body
+    req.body.story_id = req.params.story_id;
+
     // Update a story model's properties
-    console.log('Story data for update: ', updateData.story_title);
-    const storyModel = new Story(updateData);
-    console.log(updateData);
-    await storyModel.updateStory(currentTitle);
-    return storyModel;
+    const storyModel = new Story(req.body);
+    await storyModel.updateStory();
+    res.json(storyModel);
   } catch(error) {
     console.error(error.message);
   }
-}
-
-module.exports = {
-  getAllStories,
-  getAllStoriesByUsername,
-  getStoryByTitle,
-  createNewStory,
-  updateStory
 }

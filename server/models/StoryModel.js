@@ -48,7 +48,7 @@ class Story {
    * Queries the database to get all stories by username and adds them to the model
    * @param {string} username arg1 Username of the story author
    */
-  async getAllStoriesByUsername(username) {    
+  async getAllStoriesByUserId(username) {    
     await pool.query(`
     SELECT story.story_id, story.story_title, story.summary, user_account.username
     FROM story
@@ -65,25 +65,27 @@ class Story {
   }
 
   /**
-   * Queries the database with a story's title and adds story data to the model
-   * @param {string} storyTitle Title of the story
+   * Queries the database with a story's id and adds story data to the model
    */
-  async getStoryByTitle(storyTitle) {
+  async getStoryById() {
     await pool.query(`
-    SELECT story.story_title, story.summary, user_account.username
+    SELECT story.story_id, story.story_title, story.summary, user_account.username
     FROM story
     RIGHT JOIN user_account
     ON user_account.user_id = story.user_id
-    WHERE story.story_title = $1`, [storyTitle])
+    WHERE story.story_id = $1`, [this.story_id])
     .then(
       result => {
-        console.log('Story Row: ', result.rows);
-        this.story_title = result.rows[0].story_title;
-        this.summary = result.rows[0].summary;
-        this.username = result.rows[0].username;
+        if (result.rowCount > 0) {
+          console.log('Story Row: ', result.rows);
+          this.story_id = result.rows[0].story_id;
+          this.story_title = result.rows[0].story_title;
+          this.summary = result.rows[0].summary;
+          this.username = result.rows[0].username;
+        }
       }
     )
-    .catch(error => console.error(`Error: getStoryByTitle for title ${storyTitle}\n`, error.message, error.stack));
+    .catch(error => console.error(`Error: getStoryByTitle for title ${this.story_title}\n`, error.message, error.stack));
   }
 
   /**
@@ -110,12 +112,11 @@ class Story {
   /**
    * Updates a story from the database
    */
-   async updateStory(currentStoryTitle) {
-    console.log(currentStoryTitle, this.story_title);
+   async updateStory() {
     await pool.query(`
     UPDATE story SET story_title = $1, summary = $2
-    WHERE story_id = $3 AND story_title = $4
-    RETURNING *;`, [this.story_title, this.summary, this.story_id, currentStoryTitle])
+    WHERE story_id = $3
+    RETURNING *;`, [this.story_title, this.summary, this.story_id])
     .then(
       result => {
         console.log("Updated story: ", result.rows);
