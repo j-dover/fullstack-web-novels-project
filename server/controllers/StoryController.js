@@ -92,3 +92,14 @@ exports.updateStory = async(req, res) => {
     console.error(error.message);
   }
 }
+
+exports.deleteStory = async(req, res) => {
+  try {
+    const storyModel = new Story(req.body);
+    await storyModel.deleteStory();
+    res.json({"message": "Deleted story"})
+  }
+  catch(error) {
+    console.error(`Failed to delete story ${req.params.story_id}`);
+  }
+}

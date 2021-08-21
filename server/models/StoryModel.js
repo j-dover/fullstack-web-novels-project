@@ -138,6 +138,19 @@ class Story {
     .catch(error => console.error(`Error: updateStory for title ${this.story_title} \n`, error.message, error.stack));
   }
 
+  async deleteStory() {
+    await pool.query(`
+    DELETE 
+    FROM stories 
+    where story_id = $1 
+    RETURNING *;`, [req.params.story_id])
+    .then(
+      result => {
+        console.log(`Success: Deleted story ${req.params.story_id} by user`);
+      }
+    )
+    .catch(error => onsole.error(`Error: deleteStory failed, cannot delete story id: ${this.story_id}\n`, error.message, error.stack));
+  }
 }
 
 module.exports = Story;

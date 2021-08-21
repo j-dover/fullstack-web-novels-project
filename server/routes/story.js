@@ -16,15 +16,6 @@ router.post('/create', storyController.createNewStory);
 router.put('/:story_id/update', storyController.updateStory);
 
 // Delete a story
-router.delete('/:story_id', async(req, res) => {
-  try {
-    const removedStory = await pool.query('DELETE FROM stories where story_id = $1 AND user_id = $2 RETURNING *;', [req.params.story_id]);
-    console.log(`Success: Deleted story ${req.params.story_id} by user`);
-    res.json(removedStory.row);
-  }
-  catch(error) {
-    console.error(`Failed to delete story ${req.params.story_id} by user!\n${error.message}`);
-  }
-});
+router.delete('/:story_id', storyController.deleteStory);
 
 module.exports = router;
