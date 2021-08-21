@@ -4,7 +4,7 @@ const app = express();
 const pool = require('./db');
 const { query } = require('express');
 const storyController = require('./controllers/StoryController');
-// const userRouter = require('./routes/user');
+const userRouter = require('./routes/user');
 const storyRouter = require('./routes/story');
 const storiesRouter = require('./routes/stories');
 const chapterController = require('./controllers/ChapterController');
@@ -19,8 +19,9 @@ app.use(cors());
 // Routes
 app.use('/story', storyRouter);
 app.use('/stories', storiesRouter);
-// app.use('/user', userRouter);
+app.use('/user', userRouter);
 
+/*
 // Get user profile data
 app.get('/user/:username', async(req, res) => {
   try {
@@ -34,6 +35,7 @@ app.get('/user/:username', async(req, res) => {
     console.error(error.message);
   }
 });
+*/
 
 // Get all stories by user
 // app.get('/user/:username/stories', storyController.getAllStoriesByUsername);

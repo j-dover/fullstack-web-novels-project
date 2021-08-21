@@ -27,7 +27,7 @@ exports.getAllStoriesByUserId = async(req, res) => {
   try {
     // Use story model to obtain all stories
     const storyModel = new Story();
-    await storyModel.getAllStoriesByUsername(req.params.username);
+    await storyModel.getAllStoriesByUserId(req.params.user_id);
     res.json(storyModel);
   } catch(error) {
     console.error(error.message);

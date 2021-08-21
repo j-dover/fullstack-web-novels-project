@@ -48,20 +48,20 @@ class Story {
    * Queries the database to get all stories by username and adds them to the model
    * @param {string} username arg1 Username of the story author
    */
-  async getAllStoriesByUserId(username) {    
+  async getAllStoriesByUserId(userId) {    
     await pool.query(`
     SELECT story.story_id, story.story_title, story.summary, user_account.username
     FROM story
     RIGHT JOIN user_account
     ON user_account.user_id = story.user_id
-    WHERE user_account.username = $1;`, [username])
+    WHERE user_account.user_id = $1;`, [userId])
     .then(
       results => {
         console.log('Story Rows: ', results.rows);
         this.allStories = results.rows;
       }
     )
-    .catch(error => console.error(`Error: getAllStoriesByUsername for user ${username}\n`, error.message, error.stack));
+    .catch(error => console.error(`Error: getAllStoriesByUsername for user ${userId}\n`, error.message, error.stack));
   }
 
   /**
