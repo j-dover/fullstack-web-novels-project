@@ -6,7 +6,7 @@ const { query } = require('express');
 const storyController = require('./controllers/StoryController');
 // const userRouter = require('./routes/user');
 const storyRouter = require('./routes/story');
-const browseStoriesRouter = require('./routes/browseStories');
+const storiesRouter = require('./routes/stories');
 const chapterController = require('./controllers/ChapterController');
 
 const port = 5000;
@@ -18,7 +18,7 @@ app.use(cors());
 
 // Routes
 app.use('/story', storyRouter);
-app.use('/stories', browseStoriesRouter);
+app.use('/stories', storiesRouter);
 // app.use('/user', userRouter);
 
 // Get user profile data
