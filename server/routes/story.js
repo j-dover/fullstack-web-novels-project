@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const storyController = require('../controllers/StoryController');
+const chapterController = require('../controllers/ChapterController');
 
-// Get a story
-router.get('/', storyController.getStoryById)
 
 // Get a story by id
 router.get('/:story_id', storyController.getStoryById);
@@ -17,5 +16,8 @@ router.put('/:story_id/update', storyController.updateStory);
 
 // Delete a story
 router.delete('/:story_id', storyController.deleteStory);
+
+// Get chapter of a story by chapter index
+router.get('/:story_id/chapter/:chapter_index', chapterController.getChapterByIndexAndStoryId);
 
 module.exports = router;

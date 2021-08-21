@@ -24,6 +24,9 @@ class Chapter {
 
       /** @private @const {string} */
       this.chapter_text = chapter.chapter_text || null;
+
+      /** @private @const {string} */
+      this.chapter_index = chapter.chapter_index || null;
     }
   }
 
@@ -45,6 +48,29 @@ class Chapter {
       }
     )
     .catch(error => console.error(`Error: getAllChaptersByStoryId for story ${story_id}\n`, error.message, error.stack));
+  }
+
+  async getChapterByIndexAndStoryId(){
+    // Get current number of chapters in the story
+    await pool.query(`
+    SELECT chapter.chapter_id, chapter.chapter_title, story.story_title, chapter_index, chapter_text
+    FROM chapter
+    RIGHT JOIN story
+    ON story.story_id = chapter.story_id
+    WHERE story.story_id = $1 AND chapter.chapter_index = $2;
+    `, [this.story_id, this.chapter_index])
+    .then(
+      results => {
+        if (results.rowCount > 0) {
+          console.log('Current chapter', results.rows[0]);
+          this.chapter_id = results.rows[0].chapter_id;
+          this.chapter_text = results.rows[0].chapter_text;
+          this.story_title = results.rows[0].story_title;
+          this.chapter_title = results.rows[0].chapter_title;          
+        }
+      }
+    )
+    .catch(error => console.error(`Error: getChapterByIndexAndStoryId for chapter index ${this.chapter_index} of story ${this.story_id}\n`, error.message, error.stack));
   }
 
   /**
@@ -72,6 +98,17 @@ class Chapter {
    * Inserts new chapter into the database 
    */
      async createNewChapter() {
+      // Get the current number of chapters
+      await pool.query('SELECT COUNT(*) FROM chapter WHERE story_id = $1', [this.story_id])
+      .then(
+        results => {
+          console.log('Current number of chapters: ', results.rows[0].count);
+          this.chapter_index = results.rows[0].count + 1;
+        }
+      )
+      .catch(error => console.error(`Error: getChapterByIndexAndStoryId for chapter index ${this.chapter_index} of story ${this.story_id}\n`, error.message, error.stack));
+
+      // Add chapter to database with the current chapter index
       await pool.query(`
       INSERT INTO chapter(chapter_title, story_id, chapter_text) 
       VALUES ($1, $2, $3)
