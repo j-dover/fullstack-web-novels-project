@@ -2,7 +2,6 @@ var Chapter = require('../models/ChapterModel.js');
 
 /**
  * Interacts with the model to obtain all of Webvel's chapters from the database
- * @return {Chapter object}
  */
 exports.getChapterByIndexAndStoryId = async(req, res, next) => {
   try {
@@ -25,8 +24,6 @@ exports.getChapterByIndexAndStoryId = async(req, res, next) => {
 
 /**
  * Interacts with the model to obtain a storys's chapters from the database with the story id
- * @param {int} story_id ID number of a story
- * @return {Chapter object}
  */
 exports.getAllChaptersByStoryId = async(req, res) => {
   try {
@@ -41,8 +38,6 @@ exports.getAllChaptersByStoryId = async(req, res) => {
 
 /**
  * Interacts with the model to obtain a chapter by its id from the database
- * @param {int} chapter_id ID number of chapter
- * @return {Chapter object}
  */
 exports.getChapterByChapterId = async(req, res) => {
   try {
@@ -55,18 +50,44 @@ exports.getChapterByChapterId = async(req, res) => {
     console.error(error.message);
   }
 }
+
+/**
+ * Uses the model to insert a new chapter into the database
+ */
+exports.createNewChapter = async(req, res) => {
+  try {
+    // Use chapter model to create a new chapter
+    console.log('Chapter data: ', chapter_data);
+    const chapterModel = new Chapter(chapter_data);
+    await chapterModel.createNewChapter();
+    res.json(chapterModel);
+  } catch(error) {
+    console.error(error.message);
+  }
+}
+
 /**
  * Uses the model to insert a new chapter into the database
  * @param {object} chapter_data 
  * @return {Chapter object}
  */
-exports.createNewChapter = async(chapter_data) => {
+ exports.createNewChapter = async(req, res) => {
   try {
-    // Create new chapter model
+    // Use chapter model to create a new chapter
     console.log('Chapter data: ', chapter_data);
     const chapterModel = new Chapter(chapter_data);
     await chapterModel.createNewChapter();
-    return chapterModel;
+    res.json(chapterModel);
+  } catch(error) {
+    console.error(error.message);
+  }
+}
+
+exports.updateChapter = async(req, res) => {
+  try {
+    const chapterModel = new Story(req.body);
+    await storyModel.deleteChapter();
+    res.json({"message": "Deleted story"})
   } catch(error) {
     console.error(error.message);
   }

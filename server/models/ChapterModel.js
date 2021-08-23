@@ -31,6 +31,32 @@ class Chapter {
   }
 
   /**
+   * Queries the database to get a chapter of a story by the chapter index and story id
+   */
+  async getChapterByIndexAndStoryId(){
+  // Get current number of chapters in the story
+  await pool.query(`
+  SELECT chapter.chapter_id, chapter.chapter_title, story.story_title, chapter_index, chapter_text
+  FROM chapter
+  RIGHT JOIN story
+  ON story.story_id = chapter.story_id
+  WHERE story.story_id = $1 AND chapter.chapter_index = $2;
+  `, [this.story_id, this.chapter_index])
+  .then(
+    results => {
+      if (results.rowCount > 0) {
+        console.log('Current chapter', results.rows[0]);
+        this.chapter_id = results.rows[0].chapter_id;
+        this.chapter_text = results.rows[0].chapter_text;
+        this.story_title = results.rows[0].story_title;
+        this.chapter_title = results.rows[0].chapter_title;          
+      }
+    }
+  )
+  .catch(error => console.error(`Error: getChapterByIndexAndStoryId for chapter index ${this.chapter_index} of story ${this.story_id}\n`, error.message, error.stack));
+  }
+
+  /**
    * Queries the database to get all chapters of a story by the story's id and adds the chapters to the model
    * @param {string} story_id Id of the story
    */
@@ -48,29 +74,6 @@ class Chapter {
       }
     )
     .catch(error => console.error(`Error: getAllChaptersByStoryId for story ${story_id}\n`, error.message, error.stack));
-  }
-
-  async getChapterByIndexAndStoryId(){
-    // Get current number of chapters in the story
-    await pool.query(`
-    SELECT chapter.chapter_id, chapter.chapter_title, story.story_title, chapter_index, chapter_text
-    FROM chapter
-    RIGHT JOIN story
-    ON story.story_id = chapter.story_id
-    WHERE story.story_id = $1 AND chapter.chapter_index = $2;
-    `, [this.story_id, this.chapter_index])
-    .then(
-      results => {
-        if (results.rowCount > 0) {
-          console.log('Current chapter', results.rows[0]);
-          this.chapter_id = results.rows[0].chapter_id;
-          this.chapter_text = results.rows[0].chapter_text;
-          this.story_title = results.rows[0].story_title;
-          this.chapter_title = results.rows[0].chapter_title;          
-        }
-      }
-    )
-    .catch(error => console.error(`Error: getChapterByIndexAndStoryId for chapter index ${this.chapter_index} of story ${this.story_id}\n`, error.message, error.stack));
   }
 
   /**
