@@ -141,8 +141,8 @@ class Story {
   async deleteStory() {
     await pool.query(`
     DELETE 
-    FROM stories 
-    where story_id = $1 
+    FROM story 
+    where story_id = $1
     RETURNING *;`, [req.params.story_id])
     .then(
       result => {

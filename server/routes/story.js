@@ -27,7 +27,7 @@ router.get('/:story_id/chapters', chapterController.getAllChaptersByStoryId);
 router.post('/:story_id/chapter/create', chapterController.createNewChapter);
 
 // Update a chapter of story by story id
-router.post('/:story_id/chapter/:chapter_id', chapterController.updateChapter);
+router.put('/:story_id/chapter/:chapter_id', chapterController.updateChapter);
 
 // Delete a chapter of a story by story id
 router.delete('/:story_id/chapter/:chapter_id', chapterController.deleteChapter)

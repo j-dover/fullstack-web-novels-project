@@ -61,12 +61,14 @@ class Chapter {
    * @param {string} story_id Id of the story
    */
   async getAllChaptersByStoryId(story_id) {    
+    console.log(story_id);
     await pool.query(`
-    SELECT chapter.chapter_id, chapter.chapter_title, story.story_title, updated_date
+    SELECT chapter.chapter_id, chapter.chapter_title, story.story_id, story.story_title, chapter.updated_date, chapter.chapter_index
     FROM chapter
     RIGHT JOIN story
     ON story.story_id = chapter.story_id
-    WHERE story.story_id = $1;`, [story_id])
+    WHERE story.story_id = $1
+    ORDER BY chapter.chapter_index ASC;`, [story_id])
     .then(
       results => {
         console.log('Chapter Rows: ', results.rows);
@@ -79,55 +81,83 @@ class Chapter {
   /**
    * Queries the database with a chapter's title and adds chapter data to the model
    */
-   async getChapterByChapterId() {
+  /*
+   async getChapterByChapterId(chapterId) {
     await pool.query(`
-    SELECT chapter.chapter_title, chapter.chapter_text, story.story_title
+    SELECT chapter.chapter_title, chapter.chapter_text, story.story_title, chapter.chapter_index
     FROM chapter
     RIGHT JOIN story
     ON story.story_id = story.story_id
-    WHERE chapter.chapter_title = $1`, [this.chapter_id])
+    WHERE chapter.chapter_title = $1`, [chapterId])
     .then(
       result => {
         console.log('Chapter Row: ', result.rows);
+        this.chapter_id = results.rows[0].chapter_id;
         this.chapter_title = result.rows[0].chapter_title;
         this.chapter_text = result.rows[0].chapter_text;
+        this.chapter_index = result.rows[0].chapter_index;
         this.story_title = result.rows[0].story_title;
       }
     )
     .catch(error => console.error(`Error: getChapterByTitle for title ${title}\n`, error.message, error.stack));
   }
+  */
 
   /**
    * Inserts new chapter into the database 
    */
-     async createNewChapter() {
-      // Get the current number of chapters
-      await pool.query('SELECT COUNT(*) FROM chapter WHERE story_id = $1', [this.story_id])
-      .then(
-        results => {
-          console.log('Current number of chapters: ', results.rows[0].count);
-          this.chapter_index = results.rows[0].count + 1;
-        }
-      )
-      .catch(error => console.error(`Error: getChapterByIndexAndStoryId for chapter index ${this.chapter_index} of story ${this.story_id}\n`, error.message, error.stack));
+  async createNewChapter() {
+    // Get the current number of chapters
+    await pool.query('SELECT COUNT(*) FROM chapter WHERE story_id = $1', [this.story_id])
+    .then(
+      results => {
+        console.log('Current number of chapters: ', results.rows[0].count);
+        this.chapter_index = parseInt(results.rows[0].count) + 1;
+      }
+    )
+    .catch(error => console.error(`Error: getChapterByIndexAndStoryId for chapter index ${this.chapter_index} of story ${this.story_id}\n`, error.message, error.stack));
 
-      // Add chapter to database with the current chapter index
-      await pool.query(`
-      INSERT INTO chapter(chapter_title, story_id, chapter_text) 
-      VALUES ($1, $2, $3)
-      RETURNING *`, [this.chapter_title, this.story_id, this.chapter_text])
-      .then(
-        result => {
-          console.log('New chapter: ', result.rows);
-          this.chapter_id = result.rows[0].chapter_id;
-          this.chapte_title = result.rows[0].chapter_title;
-          this.chapter_text = result.rows[0].chapter_text;
-          this.story_id = result.rows[0].story_id;
-          this.updated_date = result.rows[0].updated_date;
-        }
-      )
-      .catch(error => console.error(`Error: createNewChapter for title ${this.chapter_title}, id: ${this.chapter_id}\n`, error.message, error.stack));
-    }
+    // Add chapter to database with the current chapter index
+    await pool.query(`
+    INSERT INTO chapter(chapter_title, story_id, chapter_text, chapter_index) 
+    VALUES ($1, $2, $3, $4)
+    RETURNING *`, [this.chapter_title, this.story_id, this.chapter_text, this.chapter_index])
+    .then(
+      result => {
+        console.log('New chapter: ', result.rows);
+        this.chapter_id = result.rows[0].chapter_id;
+        this.chapte_title = result.rows[0].chapter_title;
+        this.chapter_text = result.rows[0].chapter_text;
+        this.story_id = result.rows[0].story_id;
+        this.updated_date = result.rows[0].updated_date;
+      }
+    )
+    .catch(error => console.error(`Error: createNewChapter for title ${this.chapter_title}, id: ${this.chapter_id}\n`, error.message, error.stack));
+  }
+
+  /**
+   * Updates a chapter from the database 
+   */  
+  async updateChapter() {
+
+  }
+
+  /**
+   * Delete chapter from the database
+   */
+  async deleteChapter() {
+    await pool.query(`
+    DELETE 
+    FROM chapter 
+    where chapter_id = $1, story_id = $2 
+    RETURNING *;`, [this.chapter_id, this.story_id])
+    .then(
+      result => {
+        console.log(`Success: Deleted chapter id #${req.params.chapter_id} from story ${this.story_id}  by user`);
+      }
+    )
+    .catch(error => onsole.error(`Error: deleteStory failed, cannot delete chapter id #${req.params.chapter_id} from story id: ${this.story_id}\n`, error.message, error.stack));    
+  }
 }
 
 module.exports = Chapter;

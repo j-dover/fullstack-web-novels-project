@@ -93,9 +93,16 @@ exports.updateStory = async(req, res) => {
   }
 }
 
+/**
+ * Uses the model to delete a user's story from the database
+ * @param {object} req Object containing HTTP request data
+ * @param {object} res Object containing HTTP response data
+ */
 exports.deleteStory = async(req, res) => {
   try {
-    const storyModel = new Story(req.body);
+    // Use story model to delete story from database
+    let story_data = {"story_id": req.params.story_id};
+    const storyModel = new Story(story_data);
     await storyModel.deleteStory();
     res.json({"message": "Deleted story"})
   }
