@@ -100,11 +100,11 @@ exports.deleteChapter = async(req, res, next) => {
   try {
     // Use chapter model to delete a 
     let chapterData = { story_id: req.params.story_id, chapter_id: req.params.chapter_id };
-    const chapterModel = new Story(chapterData);
+    const chapterModel = new Chapter(chapterData);
     await chapterModel.deleteChapter();
 
     // Validate deletion by returning
-    if (Object.keys(chapterModel).length > 0) {
+    if (Object.keys(chapterModel).length > 2) {
       res.json({"message": "Deleted chapter"});
     }
     else {

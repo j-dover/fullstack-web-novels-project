@@ -149,14 +149,24 @@ class Chapter {
     await pool.query(`
     DELETE 
     FROM chapter 
-    where chapter_id = $1, story_id = $2 
+    where chapter_id = $1 AND story_id = $2 
     RETURNING *;`, [this.chapter_id, this.story_id])
     .then(
       result => {
-        console.log(`Success: Deleted chapter id #${req.params.chapter_id} from story ${this.story_id}  by user`);
+        // Check if the result returned the deleted chapter data containing all columns in database
+        console.log(result.rows);
+        if (result.rowCount > 0) {
+          console.log(`Success: Deleted chapter id #${this.chapter_id} from story ${this.story_id} by user`);
+          
+          // Update the model with the deleted database information
+          Object.assign(this, result);
+        }
       }
     )
-    .catch(error => onsole.error(`Error: deleteStory failed, cannot delete chapter id #${req.params.chapter_id} from story id: ${this.story_id}\n`, error.message, error.stack));    
+    .catch(error => {
+      console.error(`Error: deleteStory failed, cannot delete chapter id #${this.chapter_id} from story id: ${this.story_id}\n`, error.message, error.stack);
+      // Set chapter
+    });    
   }
 }
 
