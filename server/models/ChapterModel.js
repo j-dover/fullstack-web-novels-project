@@ -139,7 +139,21 @@ class Chapter {
    * Updates a chapter from the database 
    */  
   async updateChapter() {
-
+    await pool.query(`
+    UPDATE chapter SET chapter_title = $1, chapter_text = $2
+    WHERE chapter_id = $3
+    RETURNING *;`, [this.chapter_title, this.chapter_text, this.chapter_id])
+    .then(
+      result => {
+        console.log("Updated story: ", result.rows);
+        
+        this.story_id = result.rows[0].story_id;
+        this.story_title = result.rows[0].story_title;
+        this.user_id = result.rows[0].user_id;
+        this.summary = result.rows[0].summary;
+      }
+    )
+    .catch(error => console.error(`Error: updateStory for title ${this.story_title} \n`, error.message, error.stack));
   }
 
   /**
