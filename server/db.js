@@ -11,3 +11,4 @@ const pool = new Pool({
 });
 
 exports.pool = pool;
+module.exports = pool;
