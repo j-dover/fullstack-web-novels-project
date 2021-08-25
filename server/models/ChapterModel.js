@@ -160,12 +160,23 @@ class Chapter {
           
           // Update the model with the deleted database information
           Object.assign(this, result);
+
+          // Update the chapter index of the chapters after the deleted chapter because the amount of chapters decreased
+          pool.query(`
+          UPDATE chapter 
+          SET chapter_index = chapter_index - 1 
+          WHERE story_id = $1 AND chapter_index > $2`, [this.story_id, this.chapter_index])
+          .then(
+            results => {
+              console.log('Chapters after deleted chapter:', results.rows);
+            }
+          )
+          .catch(error => console.error(`Error: updating chapters after deleteStory failed for deleted chapter index ${this.chapter_index} of story ${this.story_id}\n`, error.message, error.stack));
         }
       }
     )
     .catch(error => {
       console.error(`Error: deleteStory failed, cannot delete chapter id #${this.chapter_id} from story id: ${this.story_id}\n`, error.message, error.stack);
-      // Set chapter
     });    
   }
 }
