@@ -49,7 +49,7 @@ class Chapter {
         this.chapter_id = results.rows[0].chapter_id;
         this.chapter_text = results.rows[0].chapter_text;
         this.story_title = results.rows[0].story_title;
-        this.chapter_title = results.rows[0].chapter_title;          
+        this.chapter_title = results.rows[0].chapter_title;  
       }
     }
   )
@@ -145,15 +145,19 @@ class Chapter {
     RETURNING *;`, [this.chapter_title, this.chapter_text, this.chapter_id])
     .then(
       result => {
-        console.log("Updated story: ", result.rows);
+        console.log("Updated chapter: ", result.rows);
         
-        this.story_id = result.rows[0].story_id;
-        this.story_title = result.rows[0].story_title;
-        this.user_id = result.rows[0].user_id;
-        this.summary = result.rows[0].summary;
+        // Update model if it is a successful update
+        if (result.rowCount > 0) {
+          this.story_id = result.rows[0].story_id;
+          this.story_title = result.rows[0].story_title;
+          this.user_id = result.rows[0].user_id;
+          this.summary = result.rows[0].summary;
+          this.chapter_index = result.rows[0].chapter_index;
+        }
       }
     )
-    .catch(error => console.error(`Error: updateStory for title ${this.story_title} \n`, error.message, error.stack));
+    .catch(error => console.error(`Error: updateChapter for title ${this.chapter_title} \n`, error.message, error.stack));
   }
 
   /**

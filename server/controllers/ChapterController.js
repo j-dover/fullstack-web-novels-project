@@ -82,10 +82,19 @@ exports.createNewChapter = async(req, res) => {
  exports.updateChapter = async(req, res) => {
   try {
     // Use chapter model to update a chapter
+    req.body.story_id = req.params.story_id;
+    req.body.chapter_id = req.params.chapter_id;
     console.log('Chapter data: ', req.body);
     const chapterModel = new Chapter(req.body);
     await chapterModel.updateChapter();
-    res.json(chapterModel);
+    
+    // Send json response if update is successful
+    if (chapterModel.index !== null) {
+      res.json({message: "Successful update"});
+    }
+    else {
+      next();
+    }
   } catch(error) {
     console.error(error.message);
   }
