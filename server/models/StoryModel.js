@@ -91,7 +91,7 @@ class Story {
   /**
    * Inserts new story into the database 
    */
-   async createNewStory() {
+  async createNewStory() {
     await pool.query(`
     INSERT INTO story(story_title, user_id, summary) 
     VALUES ($1, $2, $3) 
@@ -112,7 +112,7 @@ class Story {
   /**
    * Updates a story from the database
    */
-   async updateStory() {
+  async updateStory() {
     await pool.query(`
     UPDATE story SET story_title = $1, summary = $2
     WHERE story_id = $3
@@ -138,6 +138,9 @@ class Story {
     .catch(error => console.error(`Error: updateStory for title ${this.story_title} \n`, error.message, error.stack));
   }
 
+  /**
+   * Delete a story from the database
+   */
   async deleteStory() {
     await pool.query(`
     DELETE 

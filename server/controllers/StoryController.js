@@ -104,7 +104,7 @@ exports.deleteStory = async(req, res) => {
     let story_data = {"story_id": req.params.story_id};
     const storyModel = new Story(story_data);
     await storyModel.deleteStory();
-    res.json({"message": "Deleted story"})
+    res.json({"message": "Deleted story"});
   }
   catch(error) {
     console.error(`Failed to delete story ${req.params.story_id}`);
