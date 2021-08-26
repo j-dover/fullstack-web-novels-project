@@ -152,7 +152,7 @@ class Story {
         console.log(`Success: Deleted story ${req.params.story_id} by user`);
       }
     )
-    .catch(error => onsole.error(`Error: deleteStory failed, cannot delete story id: ${this.story_id}\n`, error.message, error.stack));
+    .catch(error => console.error(`Error: deleteStory failed, cannot delete story id: ${this.story_id}\n`, error.message, error.stack));
   }
 }
 
