@@ -6,9 +6,9 @@ const pool = new Pool({
   "host": "localhost",
   "database": "webvel",
   "password": "password",
-  "port": 5432
+  "port": 5432,
+  "max": 5
 });
 
 exports.pool = pool;
-
 module.exports = pool;

@@ -2,6 +2,8 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import UserProfile from './pages/UserProfile';
+import BrowseStories from './pages/BrowseStories';
+import LogIn from './pages/LogIn';
 import NavBar from './components/common/NavBar';
 import { Container } from 'react-bootstrap';
 
@@ -18,6 +20,8 @@ function App() {
         <NavBar/>
         <Container>
           <Route path="/user/:username/stories" component={UserProfile}/>
+          <Route path="/stories" component={BrowseStories}/>
+          <Route path="/login" component={LogIn}/>
         </Container>
       </div>
     </Router>
