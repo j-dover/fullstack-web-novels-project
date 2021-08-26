@@ -39,14 +39,13 @@ app.get('/user/:username', async(req, res) => {
 // Get all stories by user
 // app.get('/user/:username/stories', storyController.getAllStoriesByUsername);
 
-
-
-
 // Middleware for 404
 app.use((req, res, next) => {
   res.status(404).send();
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Webvel Server listening on port ${port}`);
 });
+
+module.exports = server;
