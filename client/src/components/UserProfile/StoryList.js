@@ -21,11 +21,11 @@ const StoryList = (props) => {
 
   return (
     <section className="storylist">
-      <h2 className="storylist__title">Stories</h2>
+      <h2 className="storylist__">Stories</h2>
       <ListGroup variant="flush">
         {stories.map(story => (
         <ListGroup.Item action key={story.story_id}>
-          {story.title} by {story.username}
+          {story.story_title} by {story.username}
         </ListGroup.Item>
         ))}
       </ListGroup>

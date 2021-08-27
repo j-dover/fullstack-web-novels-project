@@ -5,7 +5,7 @@ function LogInForm() {
 
   return(
   <div>
-    <h1>Log In</h1>
+    {/* <h1>Log In</h1> */}
     <Form>
       <Form.Group className="mb-3" controlId="username">
         <Form.Label>Username</Form.Label>

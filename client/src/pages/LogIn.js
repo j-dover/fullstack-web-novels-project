@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Button, Form} from 'react-bootstrap';
+import {Card, Button, Form} from 'react-bootstrap';
 import LoginForm from '../components/common/LoginForm';
 import SignInForm from '../components/common/SignInForm';
 
@@ -9,8 +9,17 @@ const LogIn = () => {
 
   return (
     <div className="login">
-      <LoginForm/>
-      Don't have an account? Create one.
+      <Card>
+        <Card.Header as="h5">Featured</Card.Header>
+        <Card.Body>
+          <Card.Title>Log In</Card.Title>
+          <LoginForm/>
+          <Card.Text>
+          Don't have an account? <a href="#">Create one.</a>
+          </Card.Text>
+          {/* <Button variant="primary">Log In</Button> */}
+        </Card.Body>
+      </Card>
     </div>
   );
 }

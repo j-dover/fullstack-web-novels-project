@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+// import './App.css';
 import UserProfile from './pages/UserProfile';
 import BrowseStories from './pages/BrowseStories';
 import LogIn from './pages/LogIn';

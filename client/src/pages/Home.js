@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ListGroup } from 'react-bootstrap';
 
-const BrowseStories = () => {
+const Home = () => {
   const [stories, setStories] = useState([]);
 
   useEffect(() => {
@@ -34,4 +34,4 @@ const BrowseStories = () => {
   );
 }
 
-export default BrowseStories;
+export default Home;
