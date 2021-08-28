@@ -7,6 +7,7 @@ Webvel is a web application for sharing stories online. This application provide
 - Solve the problems of finding stories to read for free and seeking a place to host written fictional work like novels
 - Learn to utilize React Hooks
 - Learn how to use PostgreSQL
+- Create a REST API
 
 ## Technologies Used
 - [PostgreSQL](https://www.postgresql.org/)
